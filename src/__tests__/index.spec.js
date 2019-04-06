@@ -6,6 +6,7 @@ const SENTRY_MODULE_RE = /sentry-webpack\.module\.js$/;
 const mockCli = {
   releases: {
     new: jest.fn(() => Promise.resolve()),
+    setCommits: jest.fn(() => Promise.resolve()),
     uploadSourceMaps: jest.fn(() => Promise.resolve()),
     finalize: jest.fn(() => Promise.resolve()),
     proposeVersion: jest.fn(() => Promise.resolve()),
@@ -173,6 +174,32 @@ describe('afterEmitHook', () => {
       expect(mockCli.releases.uploadSourceMaps).toBeCalledWith('42', {
         ignore: undefined,
         release: 42,
+        include: ['src'],
+        rewrite: true,
+      });
+      expect(mockCli.releases.finalize).toBeCalledWith('42');
+      expect(compilationDoneCallback).toBeCalled();
+      done();
+    });
+  });
+  
+  test('creates a release on Sentry with associated commits', done => {
+    expect.assertions(5);
+  
+    const sentryCliPlugin = new SentryCliPlugin({
+      include: 'src',
+      release: 42,
+      setCommits: 'auto',
+    });
+    sentryCliPlugin.apply(compiler);
+  
+    setImmediate(() => {
+      expect(mockCli.releases.new).toBeCalledWith('42');
+      expect(mockCli.releases.setCommits).toBeCalledWith('42', 'auto');
+      expect(mockCli.releases.uploadSourceMaps).toBeCalledWith('42', {
+        ignore: undefined,
+        release: 42,
+        setCommits: 'auto',
         include: ['src'],
         rewrite: true,
       });

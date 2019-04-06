@@ -109,6 +109,7 @@ class SentryCliPlugin {
 
     this.cli = this.getSentryCli();
     this.release = this.getReleasePromise();
+    this.commitsToSet = this.options.setCommits || false;
   }
 
   /** Returns whether this plugin is in dryRun mode. */
@@ -133,6 +134,10 @@ class SentryCliPlugin {
           new: release => {
             outputDebug('Creating new release:\n', release);
             return Promise.resolve(release);
+          },
+          setCommits: (release, commitsToSet) => {
+            outputDebug('Setting commits:\n', commitsToSet);
+            return Promise.resolve(release, commitsToSet);
           },
           uploadSourceMaps: (release, config) => {
             outputDebug('Calling upload-sourcemaps with:\n', config);
@@ -301,6 +306,12 @@ class SentryCliPlugin {
       .then(proposedVersion => {
         release = proposedVersion;
         return this.cli.releases.new(release);
+      })
+      .then(() => {
+        if (this.commitsToSet) {
+          return this.cli.releases.setCommits(release, this.commitsToSet);
+        }
+        return undefined;
       })
       .then(() => this.cli.releases.uploadSourceMaps(release, this.options))
       .then(() => this.cli.releases.finalize(release))

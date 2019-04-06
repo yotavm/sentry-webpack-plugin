@@ -103,6 +103,8 @@ Also, check the [example](example) directory.
 * `rewrite [optional]` - `boolean`, enables rewriting of matching sourcemaps so
   that indexed maps are flattened and missing sources are inlined if possible.,
   defaults to `true`
+* `setCommits [optional]` - `string`, enables associating commits with an linked
+  repository. Either `'auto'` or `'my-repo@from..to'`
 * `dryRun [optional]` - `boolean`, attempts a dry run (useful for dev
   environments)
 * `debug [optional]` - `boolean`, print some useful debug information
