@@ -17,7 +17,7 @@
     "node": ">= 6.0.0"
   },
   "dependencies": {
-    "@sentry/cli": "uturnr/sentry-cli#feature/js-associate-commit"
+    "@sentry/cli": "yotavm/sentry-cli#feature/js-associate-commit"
   },
   "devDependencies": {
     "codecov": "^3.0.0",
